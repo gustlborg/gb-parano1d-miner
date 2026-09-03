@@ -14,8 +14,7 @@ unpack it.
 ## Usage
 
 ```bash
-./probe cuda-mine --coinbase <your-o1-address> --worker <name> \
-  --search-binary ./live_search
+./probe cuda-mine --coinbase <your-o1-address> --worker <name> --search-binary ./live_search
 ```
 
 ## Troubleshooting
