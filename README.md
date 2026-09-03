@@ -18,6 +18,15 @@ unpack it.
   --search-binary ./live_search
 ```
 
+## Troubleshooting
+
+`template temporarily unavailable: ... the template just expired, try again
+in a moment` is a normal, self-recovering message during mining, not an
+error to worry about — the pool briefly had no fresh work ready between
+requests. The miner keeps retrying and resumes on its own; the GPU stays
+busy throughout. It only matters if it repeats for minutes without the GPU
+resuming work.
+
 ## Developer fee
 
 The miner directs 3% of mining time to a fixed developer wallet, in short,
