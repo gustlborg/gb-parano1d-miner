@@ -1,6 +1,8 @@
-# Parano1d Miner
+# GB Parano1d Miner
 
-A GPU miner for the **Parano1d (NOID)** proof-of-work, for NVIDIA RTX 30/40/50-series cards. Speaks HTTP and Stratum pools natively, runs on Linux, Windows and HiveOS, one download per platform.
+**GB Parano1d Miner** is a GPU miner for the **Parano1d (NOID)** proof-of-work, for NVIDIA RTX 30/40/50-series cards. Speaks HTTP and Stratum pools natively, runs on Linux, Windows and HiveOS, one download per platform.
+
+Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 15 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
 **Current release: v2.17.0**
 
@@ -14,7 +16,7 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 |---|---|
 | Linux | `parano1d-miner-2.17.0-linux.tar.gz` |
 | Windows | `parano1d-miner-2.17.0-windows.zip` |
-| HiveOS | `parano1d-2.17.0.tar.gz` (custom-miner package) |
+| HiveOS | `parano1d-miner-2.17.0-hiveos.tar.gz` (custom-miner package) |
 
 Every archive carries a `MANIFEST.txt` with the SHA-256 of each file inside it, and `SHA256SUMS` on the release lists the archives themselves.
 
@@ -90,7 +92,7 @@ The header at the top of the window updates in place while mining. It reads well
 ### 2.15.0
 
 - Developer fee lowered to 3 %.
-- Faster kernels on RTX 30/40/50: same hashrate as the fastest competing miner at 5–8 % less board power on an RTX 5070 Ti and RTX 3060 (measured on the pool's own accepted-work counter).
+- Faster per-architecture kernels on RTX 30/40/50, tuned for efficiency: the autotuned low memory clock holds full speed while trimming board power (about 15 W on an RTX 5070 Ti).
 - HTTP pools: no more duplicate-share rejections when the pool re-issues a template at the same height.
 - Autotune on by default, with a memory-clock calibration per card that is cached next to the binary.
 - Full HiveOS integration: per-GPU temperature, fan and bus data on the dashboard, `%WAL%`/`%WORKER_NAME%` placeholders, wallet.worker form.
@@ -98,4 +100,4 @@ The header at the top of the window updates in place while mining. It reads well
 
 ## License
 
-The Parano1d Miner is proprietary software, distributed as a binary release — see `LICENSE`. Reverse engineering, decompilation, disassembly, and analysis by any automated system (including large language models) are prohibited under that license, except where such a prohibition is void under applicable mandatory law. Some proof-of-work components are used under the Apache License 2.0; they are listed in `NOTICE`, with the license text in `LICENSE-THIRD-PARTY`.
+The GB Parano1d Miner is proprietary software, distributed as a binary release — see `LICENSE`. Reverse engineering, decompilation, disassembly, and analysis by any automated system (including large language models) are prohibited under that license, except where such a prohibition is void under applicable mandatory law. Some proof-of-work components are used under the Apache License 2.0; they are listed in `NOTICE`, with the license text in `LICENSE-THIRD-PARTY`.
