@@ -4,7 +4,7 @@
 
 Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 15 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
-**Current release: v2.17.0**
+**Current release: v2.17.6**
 
 ---
 
@@ -14,9 +14,9 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 
 | Platform | Archive |
 |---|---|
-| Linux | `parano1d-miner-2.17.0-linux.tar.gz` |
-| Windows | `parano1d-miner-2.17.0-windows.zip` |
-| HiveOS | `parano1d-miner-2.17.0-hiveos.tar.gz` (custom-miner package) |
+| Linux | `parano1d-miner-2.17.6-linux.tar.gz` |
+| Windows | `parano1d-miner-2.17.6-windows.zip` |
+| HiveOS | `parano1d-miner-2.17.6-hiveos.tar.gz` (custom-miner package) |
 
 Every archive carries a `MANIFEST.txt` with the SHA-256 of each file inside it, and `SHA256SUMS` on the release lists the archives themselves.
 
@@ -83,7 +83,13 @@ This miner mines a disclosed **3 % developer fee** into a separate wallet, inter
 
 The header at the top of the window updates in place while mining. It reads well live but copies out of a terminal as merged lines — set `PARANO1D_PLAIN_OUTPUT=1` for a plain, append-only log that pastes cleanly into a bug report.
 
-## What's new in 2.17.0
+## What's new in 2.17.6
+
+- Share quality: the miner keeps searching your work when a pool or fee connection stumbles instead of going idle, so more of what the GPU computes lands as accepted work. The disclosed 3 % fee stays exact — deferred and repaid, never dropped.
+- Efficiency: new `--lock-core-clock <MHz>` settles each card at its best hashes-per-watt point, alongside `--powerlimit` and memory-clock autotune.
+- Refined native per-architecture kernels (sm_86 / sm_89 / sm_120): a further, small raw-rate improvement over 2.17.0.
+
+### 2.17.0
 
 - Power-limit mode: `--powerlimit <W>` (also `270w`, one value or one per GPU), range-checked against the card, restored at exit; HiveOS `POWER_LIMIT=`.
 - Linux and HiveOS binaries now built against glibc 2.31, so they start on Ubuntu 20.04/22.04 and current HiveOS images, not only on the newest distributions.
