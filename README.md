@@ -4,7 +4,7 @@
 
 Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 15 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
-**Current release: v2.17.6**
+**Current release: v2.17.8**
 
 ---
 
@@ -14,11 +14,11 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 
 | Platform | Archive |
 |---|---|
-| Linux | `parano1d-miner-2.17.6-linux.tar.gz` |
-| Windows | `parano1d-miner-2.17.6-windows.zip` |
-| HiveOS | `parano1d-miner-2.17.6-hiveos.tar.gz` (custom-miner package) |
+| Linux | `parano1d-miner-2.17.8-linux.tar.gz` |
+| Windows | `parano1d-miner-2.17.8-windows.zip` |
+| HiveOS | `parano1d-miner-2.17.8-hiveos.tar.gz` (custom-miner package) |
 
-Every archive carries a `MANIFEST.txt` with the SHA-256 of each file inside it, and `SHA256SUMS` on the release lists the archives themselves.
+Every archive carries a `SHA256SUMS` with the SHA-256 of each file inside it, and the `SHA256SUMS` on the release lists the archives themselves.
 
 No CUDA Toolkit is needed to run — only a current NVIDIA driver. The Linux and HiveOS binaries run on any 64-bit Linux with glibc 2.31 or newer (Ubuntu 20.04 and later, current HiveOS images).
 
@@ -59,7 +59,7 @@ RTX 30/40/50-series, detected per card, with natively compiled kernels. Other NV
 --devices 0,1,2
 ```
 
-Each card is tuned and driven independently under a single shared pool connection — the pool sees one worker, not one per card. Without `--devices`, the miner uses the visible GPU.
+By default the miner uses **every visible GPU** — a multi-GPU rig mines all its cards with no extra flag. Each card is driven independently under a single shared pool connection, so the pool sees one worker, not one per card. Pass `--devices 0,1,2` to restrict mining to specific cards (and only those cards are tuned).
 
 ## Autotune
 
@@ -83,7 +83,14 @@ This miner mines a disclosed **3 % developer fee** into a separate wallet, inter
 
 The header at the top of the window updates in place while mining. It reads well live but copies out of a terminal as merged lines — set `PARANO1D_PLAIN_OUTPUT=1` for a plain, append-only log that pastes cleanly into a bug report.
 
-## What's new in 2.17.6
+## What's new in 2.17.8
+
+- **All GPUs by default.** A multi-GPU rig mines on every visible card without `--devices`; the flag now selects a subset. Clock/power tuning stays off on cards you did not select.
+- **Core-clock lock managed for you.** `--lock-core-clock` no longer leaves a card throttled after the miner stops — the lock is released at a clean exit, and any stale lock left by an earlier run is cleared on the next start without the flag.
+- **HiveOS out of the box.** The custom-miner package installs and starts cleanly (the install/run scripts and the `parano1d/` folder are fixed), and the Linux/HiveOS binaries run on current HiveOS images and Ubuntu 20.04/22.04 (glibc 2.31).
+- **Robust Windows Stratum start**, and **backup-pool failover** on a stuck pool: a sustained `mining.pause` (a pool that keeps the connection but stops sending work) switches to `--backup-pool`, and back when the main pool returns.
+
+### 2.17.6
 
 - Share quality: the miner keeps searching your work when a pool or fee connection stumbles instead of going idle, so more of what the GPU computes lands as accepted work. The disclosed 3 % fee stays exact — deferred and repaid, never dropped.
 - Efficiency: new `--lock-core-clock <MHz>` settles each card at its best hashes-per-watt point, alongside `--powerlimit` and memory-clock autotune.
@@ -92,7 +99,6 @@ The header at the top of the window updates in place while mining. It reads well
 ### 2.17.0
 
 - Power-limit mode: `--powerlimit <W>` (also `270w`, one value or one per GPU), range-checked against the card, restored at exit; HiveOS `POWER_LIMIT=`.
-- Linux and HiveOS binaries now built against glibc 2.31, so they start on Ubuntu 20.04/22.04 and current HiveOS images, not only on the newest distributions.
 - Per-model board-power table (RTX 3060 … RTX 5090, Ti and Super models included) with efficient starting points in every README.
 
 ### 2.15.0
