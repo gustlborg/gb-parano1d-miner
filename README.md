@@ -4,7 +4,7 @@
 
 Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 15 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
-**Current release: v2.17.8**
+**Current release: v2.17.9**
 
 ---
 
@@ -14,9 +14,9 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 
 | Platform | Archive |
 |---|---|
-| Linux | `parano1d-miner-2.17.8-linux.tar.gz` |
-| Windows | `parano1d-miner-2.17.8-windows.zip` |
-| HiveOS | `parano1d-2.17.8.tar.gz` (custom-miner package) |
+| Linux | `parano1d-miner-2.17.9-linux.tar.gz` |
+| Windows | `parano1d-miner-2.17.9-windows.zip` |
+| HiveOS | `parano1d-2.17.9.tar.gz` (custom-miner package) |
 
 Every archive carries a `SHA256SUMS` with the SHA-256 of each file inside it, and the `SHA256SUMS` on the release lists the archives themselves.
 
@@ -36,10 +36,10 @@ No CUDA Toolkit is needed to run — only a current NVIDIA driver. The Linux and
 
 **HiveOS** — Flight Sheet → Custom miner:
 - Miner name: `parano1d`
-- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v2.17.8/parano1d-2.17.8.tar.gz`
+- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v2.17.9/parano1d-2.17.9.tar.gz`
 - Wallet and worker template: `%WAL%.%WORKER_NAME%` (or your `o1...` address), pool address in the pool field; everything else is optional (see the README inside the package).
 
-HiveOS derives the miner name from the archive's file name, so use exactly this URL and `parano1d`.
+HiveOS derives the miner name from the archive's file name, so use exactly this URL and `parano1d`. On HiveOS the rig's OC profile owns the clocks: memory-clock autotune is off there unless you add `AUTOTUNE=on`.
 
 ## Pools
 
@@ -56,7 +56,7 @@ A second pool can be given with `--backup-pool` / `--backup-rpc`; the miner swit
 
 ## Hardware
 
-RTX 30/40/50-series, detected per card, with natively compiled kernels. Other NVIDIA GPUs with compute capability 8.0 or newer run a JIT-compiled fallback kernel (correct, speed not measured, needs a driver with CUDA 13.3 support). **RTX 20-series and older are not supported.** One binary covers all three generations, so a rig with mixed generations needs no separate download.
+RTX 30/40/50-series, detected per card, with natively compiled kernels. Other NVIDIA GPUs with compute capability 8.0 or newer run a JIT-compiled fallback kernel (correct, speed not measured, needs a driver with CUDA 13.3 support). **RTX 20-series and older are not supported**; in a mixed rig the miner skips such a card with a note and mines on the others. One binary covers all three generations, so a rig with mixed generations needs no separate download.
 
 ## Multi-GPU
 
@@ -64,11 +64,11 @@ RTX 30/40/50-series, detected per card, with natively compiled kernels. Other NV
 --devices 0,1,2
 ```
 
-By default the miner uses **every visible GPU** — a multi-GPU rig mines all its cards with no extra flag. Each card is driven independently under a single shared pool connection, so the pool sees one worker, not one per card. Pass `--devices 0,1,2` to restrict mining to specific cards (and only those cards are tuned).
+By default the miner uses **every supported GPU** — a multi-GPU rig mines all its cards with no extra flag. Each card is driven independently under a single shared pool connection, so the pool sees one worker, not one per card. Pass `--devices 0,1,2` to restrict mining to specific cards (and only those cards are tuned); a list that names an unsupported card stops with a message naming it.
 
 ## Autotune
 
-On by default: the miner measures once per card the lowest memory clock that still delivers within 1 % of the best hashrate and locks it while mining (this proof-of-work needs no memory bandwidth, so that is pure power saving — about 15 W on an RTX 5070 Ti). The lock is removed when the miner exits. Needs passwordless `nvidia-smi` on Linux or Administrator rights on Windows; without them the miner says so and mines on at default clocks.
+Offered on the first start of a card (asks before measuring; `--autotune on` measures without asking, on HiveOS off unless `AUTOTUNE=on`): the miner measures once per card the lowest memory clock that still delivers within 1 % of the best hashrate and locks it while mining (this proof-of-work needs no memory bandwidth, so that is pure power saving — about 15 W on an RTX 5070 Ti). The lock is removed when the miner exits. Needs passwordless `nvidia-smi` on Linux or Administrator rights on Windows; without them the miner says so and mines on at default clocks.
 
 ## Power limit
 
@@ -88,10 +88,19 @@ This miner mines a disclosed **3 % developer fee** into a separate wallet, inter
 
 The header at the top of the window updates in place while mining. It reads well live but copies out of a terminal as merged lines — set `PARANO1D_PLAIN_OUTPUT=1` for a plain, append-only log that pastes cleanly into a bug report.
 
-## What's new in 2.17.8
+## What's new in 2.17.9
+
+- **Your clock settings stay yours.** The miner only releases a core-clock lock it set itself; a lock from a HiveOS OC profile, Afterburner or `nvidia-smi -lgc` is left alone. A lock left by 2.17.8 or older: reboot once or run `nvidia-smi -rgc`.
+- **HiveOS: OC profile in charge, standard paths.** Autotune is off by default on HiveOS (`AUTOTUNE=on` enables it), config and log sit where HiveOS expects them (`miner log` readable, copy in `/var/log/miner/custom/parano1d.log`).
+- **Mixed rigs with RTX 20-series cards start.** Unsupported cards are skipped with a note instead of stopping the whole start; HiveOS passes only supported cards.
+- **Clean stop, settings always restored** — power limit and clock locks are put back on every exit: engine crash, Ctrl+C pressed twice, a closed terminal or console window. Ctrl+C now says "stopping … please wait".
+- **Autotune asks first.** Without a saved result the miner asks before measuring a card (about 2½ minutes, once; Enter = yes) and reminds you to keep the GPU free; a saved result is simply used; `--autotune on` measures without asking, `--autotune off` skips it. Missing Administrator/root rights are reported with a question whether to mine anyway at normal clocks, so they cannot go unnoticed.
+- **Honest tuning messages** — a setting the card does not support (e.g. memory-clock locks on many laptop GPUs) is reported as such instead of "applied".
+
+### 2.17.8
 
 - **All GPUs by default.** A multi-GPU rig mines on every visible card without `--devices`; the flag now selects a subset. Clock/power tuning stays off on cards you did not select.
-- **Core-clock lock managed for you.** `--lock-core-clock` no longer leaves a card throttled after the miner stops — the lock is released at a clean exit, and any stale lock left by an earlier run is cleared on the next start without the flag.
+- **Core-clock lock managed for you.** `--lock-core-clock` no longer leaves a card throttled after the miner stops — the lock is released at a clean exit, and a stale lock is cleared on the next start without the flag.
 - **HiveOS out of the box.** The custom-miner package installs and starts cleanly (the install/run scripts and the `parano1d/` folder are fixed), and the Linux/HiveOS binaries run on current HiveOS images and Ubuntu 20.04/22.04 (glibc 2.31).
 - **Robust Windows Stratum start**, and **backup-pool failover** on a stuck pool: a sustained `mining.pause` (a pool that keeps the connection but stops sending work) switches to `--backup-pool`, and back when the main pool returns.
 
