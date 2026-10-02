@@ -16,7 +16,7 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 |---|---|
 | Linux | `parano1d-miner-2.17.8-linux.tar.gz` |
 | Windows | `parano1d-miner-2.17.8-windows.zip` |
-| HiveOS | `parano1d-miner-2.17.8-hiveos.tar.gz` (custom-miner package) |
+| HiveOS | `parano1d-2.17.8.tar.gz` (custom-miner package) |
 
 Every archive carries a `SHA256SUMS` with the SHA-256 of each file inside it, and the `SHA256SUMS` on the release lists the archives themselves.
 
@@ -34,7 +34,12 @@ No CUDA Toolkit is needed to run — only a current NVIDIA driver. The Linux and
 ./gb-parano1d-miner.exe cuda-mine --pool innovlab --coinbase <your-o1-address> --worker rig0 --search-binary gb-parano1d-engine.exe
 ```
 
-**HiveOS** — Flight Sheet → Custom miner, installation URL pointing at the HiveOS archive. Put your `o1...` address in the wallet field and the pool address in the pool field; everything else is optional (see the README inside the package).
+**HiveOS** — Flight Sheet → Custom miner:
+- Miner name: `parano1d`
+- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v2.17.8/parano1d-2.17.8.tar.gz`
+- Wallet and worker template: `%WAL%.%WORKER_NAME%` (or your `o1...` address), pool address in the pool field; everything else is optional (see the README inside the package).
+
+HiveOS derives the miner name from the archive's file name, so use exactly this URL and `parano1d`.
 
 ## Pools
 
