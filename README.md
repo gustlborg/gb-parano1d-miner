@@ -1,10 +1,10 @@
 # GB Parano1d Miner
 
-**GB Parano1d Miner** is a GPU miner for the **Parano1d (NOID)** proof-of-work, for NVIDIA RTX 30/40/50-series cards. Speaks HTTP and Stratum pools natively, runs on Linux, Windows and HiveOS, one download per platform.
+**GB Parano1d Miner** is a GPU miner for the **Parano1d (NOID)** proof-of-work, for NVIDIA RTX 30/40/50-series cards and Hopper (H100) data-center GPUs. Speaks HTTP and Stratum pools natively, runs on Linux, Windows and HiveOS, one download per platform.
 
 Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 15 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
-**Current release: v2.17.9**
+**Current release: v2.18.2**
 
 ---
 
@@ -14,9 +14,9 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 
 | Platform | Archive |
 |---|---|
-| Linux | `parano1d-miner-2.17.9-linux.tar.gz` |
-| Windows | `parano1d-miner-2.17.9-windows.zip` |
-| HiveOS | `parano1d-2.17.9.tar.gz` (custom-miner package) |
+| Linux | `parano1d-miner-2.18.2-linux.tar.gz` |
+| Windows | `parano1d-miner-2.18.2-windows.zip` |
+| HiveOS | `parano1d-2.18.2.tar.gz` (custom-miner package) |
 
 Every archive carries a `SHA256SUMS` with the SHA-256 of each file inside it, and the `SHA256SUMS` on the release lists the archives themselves.
 
@@ -36,7 +36,7 @@ No CUDA Toolkit is needed to run — only a current NVIDIA driver. The Linux and
 
 **HiveOS** — Flight Sheet → Custom miner:
 - Miner name: `parano1d`
-- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v2.17.9/parano1d-2.17.9.tar.gz`
+- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v2.18.2/parano1d-2.18.2.tar.gz`
 - Wallet and worker template: `%WAL%.%WORKER_NAME%` (or your `o1...` address), pool address in the pool field; everything else is optional (see the README inside the package).
 
 HiveOS derives the miner name from the archive's file name, so use exactly this URL and `parano1d`. On HiveOS the rig's OC profile owns the clocks: memory-clock autotune is off there unless you add `AUTOTUNE=on`.
@@ -56,7 +56,7 @@ A second pool can be given with `--backup-pool` / `--backup-rpc`; the miner swit
 
 ## Hardware
 
-RTX 30/40/50-series, detected per card, with natively compiled kernels. Other NVIDIA GPUs with compute capability 8.0 or newer run a JIT-compiled fallback kernel (correct, speed not measured, needs a driver with CUDA 13.3 support). **RTX 20-series and older are not supported**; in a mixed rig the miner skips such a card with a note and mines on the others. One binary covers all three generations, so a rig with mixed generations needs no separate download.
+RTX 30/40/50-series and Hopper (H100 — validated on H100 NVL; the H200 uses the same architecture but has not been tested), detected per card, with natively compiled kernels. Other NVIDIA GPUs with compute capability 8.0 or newer run a JIT-compiled fallback kernel (correct, speed not measured, needs a driver with CUDA 13.3 support). **RTX 20-series and older are not supported**; in a mixed rig the miner skips such a card with a note and mines on the others. One binary covers all of them, so a rig with mixed generations needs no separate download.
 
 ## Multi-GPU
 
@@ -88,7 +88,12 @@ This miner mines a disclosed **3 % developer fee** into a separate wallet, inter
 
 The header at the top of the window updates in place while mining. It reads well live but copies out of a terminal as merged lines — set `PARANO1D_PLAIN_OUTPUT=1` for a plain, append-only log that pastes cleanly into a bug report.
 
-## What's new in 2.17.9
+## What's new in 2.18.2
+
+- **Hopper (H100) support.** A native kernel for NVIDIA Hopper (compute capability 9.0), validated on H100 NVL, single- and multi-GPU. The H200 uses the same architecture but has not been tested yet. RTX 30/40/50 behaviour and hashrate are unchanged.
+- **Robustness and integrity hardening** under the hood; nothing changes in how you install or run the miner.
+
+### 2.17.9
 
 - **Your clock settings stay yours.** The miner only releases a core-clock lock it set itself; a lock from a HiveOS OC profile, Afterburner or `nvidia-smi -lgc` is left alone. A lock left by 2.17.8 or older: reboot once or run `nvidia-smi -rgc`.
 - **HiveOS: OC profile in charge, standard paths.** Autotune is off by default on HiveOS (`AUTOTUNE=on` enables it), config and log sit where HiveOS expects them (`miner log` readable, copy in `/var/log/miner/custom/parano1d.log`).
