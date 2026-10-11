@@ -2,6 +2,8 @@
 
 **GB Parano1d Miner** is a GPU miner for the **Parano1d (NOID)** proof-of-work, for NVIDIA RTX 30/40/50-series cards and Hopper (H100) data-center GPUs. Speaks HTTP and Stratum pools natively, runs on Linux, Windows and HiveOS, one download per platform.
 
+Works out of the box with the **InnovLab** and **Suprnova** pools (`--pool innovlab` / `--pool suprnova`) and with any other HTTP or Stratum pool via `--rpc`.
+
 Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 15 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
 **Current release: v2.18.2**
