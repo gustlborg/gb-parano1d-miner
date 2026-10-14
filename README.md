@@ -62,7 +62,7 @@ RTX 30/40/50-series and Hopper (H100 — validated on H100 NVL; the H200 uses th
 
 ## Measured hashrate
 
-Measured live on Linux at the InnovLab pool with this release, 3 minutes per card, at stock settings: the card's default power limit and clocks, standard memory clock, autotune off. Power is the board power while mining; kH/J is kilohashes per joule (per watt-second).
+Measured live on Linux at the InnovLab pool with this release, 3 minutes per card, at stock settings without any overclocking: the card's default power limit and clocks, standard memory clock, autotune off. Power is the board power while mining; kH/J is kilohashes per joule (per watt-second).
 
 | GPU | MH/s | Power | kH/J | vs 2.18.2 |
 |---|---|---|---|---|
