@@ -22,7 +22,7 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 
 The Linux and Windows archives carry a `SHA256SUMS` with the SHA-256 of each file inside them, and the `SHA256SUMS` on the release lists all three archives.
 
-No CUDA Toolkit is needed to run — only a current NVIDIA driver. The Linux and HiveOS binaries run on any 64-bit Linux with glibc 2.31 or newer (Ubuntu 20.04 and later, current HiveOS images).
+No CUDA Toolkit is needed to run — only an NVIDIA driver, version 580 or newer. The Linux and HiveOS binaries run on any 64-bit Linux with glibc 2.31 or newer (Ubuntu 20.04 and later, current HiveOS images).
 
 ## Quick start
 
@@ -45,7 +45,7 @@ HiveOS derives the miner name from the archive's file name, so use exactly this 
 
 ## Pools
 
-`--pool` takes a keyword, or use `--rpc <url>` for any other pool — HTTP and Stratum are detected automatically from the address. InnovLab is the default.
+`--pool` takes a keyword, or use `--rpc <url>` for any other pool — HTTP and Stratum are detected automatically from the address. InnovLab is the default. In `start.sh` / `start.bat`, `POOL` takes either a keyword or a full pool address with its prefix, for example `stratum+tcp://noid.suprnova.cc:3345` for Suprnova SOLO.
 
 | Keyword | Kind |
 |---|---|
