@@ -68,16 +68,13 @@ Measured live on Linux at the InnovLab pool with this release, 3 minutes per car
 |---|---|---|---|---|
 | RTX 3060 | 30.3 | 170 W | 178 | +9.7 % |
 | RTX 5060 Ti | 61.1 | 173 W | 354 | +13.0 % |
-| RTX 3080 Ti¹ | 78.4 | 228 W | 344 | +10.5 % |
 | RTX 5070 | 81.9 | 212 W | 387 | +12.5 % |
 | RTX 4070 Ti | 101.2 | 284 W | 356 | +12.4 % |
 | RTX 5070 Ti | 122.4 | 313 W | 391 | +12.9 % |
 | RTX 5090 | 268.4 | 575 W | 467 | +8.9 % |
-| H100 NVL² | 381.6 | 397 W | 960 | +158 % |
+| H100 NVL¹ | 381.6 | 397 W | 960 | +158 % |
 
-¹ Per card, measured on a three-card server whose host runs an overclocking profile: core clock locked at 1665 MHz, memory clock at 5001 MHz (the power limit was not reached).
-
-² Per card, measured on a two-card server whose host had set the power limit to 400 W (the card's default is 310 W); expect a lower hashrate at the default limit.
+¹ Per card, measured on a two-card server whose host had set the power limit to 400 W (the card's default is 310 W); expect a lower hashrate at the default limit.
 
 Your numbers depend on the individual card, its power limit and its cooling.
 
