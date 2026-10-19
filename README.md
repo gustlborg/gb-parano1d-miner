@@ -1,6 +1,6 @@
 # GB Parano1d Miner
 
-![Dashboard on Windows](images/dashboard-windows.png)
+![Dashboard on Windows](images/dashboard-windows-2.18.5.png)
 
 **GB Parano1d Miner** is a GPU miner for the **Parano1d (NOID)** proof-of-work, for NVIDIA RTX 30/40/50-series cards and Hopper (H100) data-center GPUs. Speaks HTTP and Stratum pools natively, runs on Linux, Windows and HiveOS, one download per platform.
 
