@@ -62,6 +62,15 @@ A second pool can be given with `--backup-pool` / `--backup-rpc`; the miner swit
 
 RTX 30/40/50-series and Hopper (H100 — validated on H100 NVL; the H200 uses the same architecture but has not been tested), detected per card, with natively compiled kernels. Workstation and data-center cards with the same chips (for example the RTX A-series, A10/A40, L4/L40 and RTX PRO Blackwell) get the same native kernels; their speed is not measured. Any other NVIDIA GPU with compute capability 8.0 or newer (for example the A100) runs a JIT-compiled fallback kernel (correct, speed not measured; it needs a recent NVIDIA driver, and the miner says so if yours is too old). **RTX 20-series and older are not supported**; in a mixed rig the miner skips such a card with a note and mines on the others. One binary covers all of them, so a rig with mixed generations needs no separate download.
 
+## Measured with efficiency settings
+
+Locked core clock, memory clock and core-clock offset, set with the miner's own options (`LOCK_CORE_CLOCK`, `LOCK_MEM_CLOCK`, `CORE_OFFSET` in `start.sh` / `start.bat`, the same keys on HiveOS). Measured live at the InnovLab pool with this release. kH/W is kilohashes per second per watt. Every card tolerates a different offset; see "Same hashrate, less power" in the package README.
+
+| GPU | Core clock / memory clock / offset | MH/s | Power | kH/W |
+|---|---|---|---|---|
+| RTX 3060 (Windows) | 1750 MHz / 810 MHz / +200 MHz | 29.52 | 90.1 W | 327.6 |
+| RTX 5070 Ti (Linux) | 2705 MHz / 810 MHz / +300 MHz | 117.29 | 186.6 W | 628.6 |
+
 ## Multi-GPU
 
 ```
@@ -88,25 +97,7 @@ The miner reads each card's allowed range first and refuses to start with a valu
 
 `--efficiency mode1` or `--efficiency mode2` (in `start.sh` / `start.bat`: `EFFICIENCY=mode1`; on HiveOS `EFFICIENCY=mode1` in the custom user config) runs a kernel variant that gives up some hashrate for noticeably fewer watts per hash: mode 1 trades the least hashrate, mode 2 saves the most power. Off unless you set it.
 
-The modes save power whenever the card is not held back by its power limit: with a locked core clock (`--lock-core-clock` or an OC profile), or when it already reaches its top clock below the limit, like the RTX 5070 Ti below at stock settings. A card that runs into its power limit, like the RTX 3060 at stock settings, turns the saved power into clock instead, so there a mode only costs hashrate at the same power: leave it off. Measured live at the InnovLab pool, two runs of 2 minutes per setting, memory clock 810 MHz with the lock, standard memory clock at stock:
-
-| Card | Core clock | Mode | MH/s | Power | kH/W |
-|---|---|---|---|---|---|
-| RTX 3060 | locked at 1750 MHz | standard | 29.6 | 123 W | 240 |
-| RTX 3060 | locked at 1750 MHz | mode 1 | 29.2 | 120 W | 243 |
-| RTX 3060 | locked at 1750 MHz | mode 2 | 27.6 | 105 W | 263 |
-| RTX 3060 | stock (170 W limit) | standard | 30.6 | 170 W | 180 |
-| RTX 3060 | stock (170 W limit) | mode 1 | 30.4 | 170 W | 179 |
-| RTX 3060 | stock (170 W limit) | mode 2 | 29.5 | 169 W | 174 |
-| RTX 4060 Ti | locked at 2400 MHz | standard | 50.4 | 118 W | 426 |
-| RTX 4060 Ti | locked at 2400 MHz | mode 1 | 49.8 | 115 W | 434 |
-| RTX 4060 Ti | locked at 2400 MHz | mode 2 | 48.0 | 103 W | 466 |
-| RTX 5070 Ti | locked at 2600 MHz | standard | 112.7 | 208 W | 542 |
-| RTX 5070 Ti | locked at 2600 MHz | mode 1 | 111.8 | 202 W | 552 |
-| RTX 5070 Ti | locked at 2600 MHz | mode 2 | 106.9 | 183 W | 585 |
-| RTX 5070 Ti | stock (320 W limit) | standard | 124.5 | 307 W | 405 |
-| RTX 5070 Ti | stock (320 W limit) | mode 1 | 123.4 | 301 W | 410 |
-| RTX 5070 Ti | stock (320 W limit) | mode 2 | 118.0 | 269 W | 438 |
+The modes save power whenever the card is not held back by its power limit: with a locked core clock (`--lock-core-clock` or an OC profile), or when it already reaches its top clock below the limit, like an RTX 5070 Ti at stock settings. A card that runs into its power limit, like an RTX 3060 at stock settings, turns the saved power into clock instead, so there a mode only costs hashrate at the same power: leave it off.
 
 Efficiency modes exist for RTX 30, RTX 40 and RTX 50 cards. Other GPUs (H100, and cards on the JIT fallback) keep the standard kernel and the start line says so. A mode works together with a core-clock offset (see "Same hashrate, less power" in the package README).
 
