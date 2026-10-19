@@ -62,15 +62,6 @@ A second pool can be given with `--backup-pool` / `--backup-rpc`; the miner swit
 
 RTX 30/40/50-series and Hopper (H100 — validated on H100 NVL; the H200 uses the same architecture but has not been tested), detected per card, with natively compiled kernels. Workstation and data-center cards with the same chips (for example the RTX A-series, A10/A40, L4/L40 and RTX PRO Blackwell) get the same native kernels; their speed is not measured. Any other NVIDIA GPU with compute capability 8.0 or newer (for example the A100) runs a JIT-compiled fallback kernel (correct, speed not measured; it needs a recent NVIDIA driver, and the miner says so if yours is too old). **RTX 20-series and older are not supported**; in a mixed rig the miner skips such a card with a note and mines on the others. One binary covers all of them, so a rig with mixed generations needs no separate download.
 
-## Measured with efficiency settings
-
-Locked core clock, memory clock and core-clock offset, set with the miner's own options (`LOCK_CORE_CLOCK`, `LOCK_MEM_CLOCK`, `CORE_OFFSET` in `start.sh` / `start.bat`, the same keys on HiveOS). Measured live at the InnovLab pool with this release. kH/W is kilohashes per second per watt. Every card tolerates a different offset; see "Same hashrate, less power" in the package README.
-
-| GPU | Core clock / memory clock / offset | MH/s | Power | kH/W |
-|---|---|---|---|---|
-| RTX 3060 (Windows) | 1750 MHz / 810 MHz / +200 MHz | 29.52 | 90.1 W | 327.6 |
-| RTX 5070 Ti (Linux) | 2705 MHz / 810 MHz / +300 MHz | 117.29 | 186.6 W | 628.6 |
-
 ## Multi-GPU
 
 ```
