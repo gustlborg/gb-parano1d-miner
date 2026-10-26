@@ -10,8 +10,8 @@ Built for **hashrate and efficiency**: per-architecture search kernels reach ful
 
 **Current release: v3.0.2**
 
-- **New native kernel for GA100 cards (CMP 170HX, A100, A30): about 2.5× the hashrate on the CMP 170HX and the A100.** These cards (compute capability 8.0) ran the portable JIT fallback until now. 3.0.2 brings a kernel built for them, measured live at the InnovLab pool: CMP 170HX 164.8 MH/s per card at 198 W (power limit 200 W, set by the rig's host; was 64.0 MH/s), A100 SXM4 251.4 MH/s at about 270–295 W (power limit 400 W, not reached; was about 99 MH/s). Like every other supported card it now runs with NVIDIA driver 580 or newer; the fallback needed a driver with CUDA 13.3 support, so on older drivers these cards did not start at all.
-- **Less CPU load on every GPU.** At the end of each batch the engine now waits only as long as the card and the host need: on an otherwise idle host about 1–2 % of one CPU core per GPU instead of about 5 % (RTX 3060 under Windows 1.0–1.5 %, RTX 5070 Ti 1.7–1.9 %, A100 0.9 %), with the GPU kept as busy as before (the time it waits for the host between batches unchanged within ±0.01 %). On a busy host it keeps a larger margin by itself.
+- **New native kernel for GA100 cards (CMP 170HX, A100, A30): about 2.5× the hashrate on the CMP 170HX and the A100.** These cards (compute capability 8.0) ran the portable JIT fallback until now. 3.0.2 brings a kernel built for them, measured live at the InnovLab pool: CMP 170HX 164.8 MH/s per card at 198 W (power limit 200 W, set by the rig's host), A100 SXM4 251.4 MH/s at about 270–295 W (power limit 400 W, not reached). In v3.0.1 these cards reached 64.0 MH/s (CMP 170HX) and about 99 MH/s (A100). Like every other supported card it now runs with NVIDIA driver 580 or newer; the fallback needed a driver with CUDA 13.3 support, so on older drivers these cards did not start at all.
+- **Less CPU load on every GPU.** At the end of each batch the engine now waits only as long as the card and the host need: on an otherwise idle host about 1–2 % of one CPU core per GPU instead of about 5 % (RTX 3060 under Windows 1.0–1.5 %, RTX 5070 Ti 1.7–2.2 %, A100 0.9 %), with the GPU kept as busy as before (the time it waits for the host between batches unchanged within ±0.01 %). On a busy host it keeps a larger margin by itself.
 
 **Since 3.0.1:**
 
@@ -38,12 +38,24 @@ No CUDA Toolkit is needed to run — only an NVIDIA driver, version 580 or newer
 
 ## Quick start
 
-**Linux** — open `start.sh`, put your payout address after `WALLET=` (and optionally a worker name after `WORKER=`), then run `sh start.sh`. Or pass the full command line:
+**Linux and Windows** — open the start script in a text editor (`start.sh`; on Windows right-click `start.bat` → Edit), fill in the block at the top, save, and start it:
+
+| Field | What to put in |
+|---|---|
+| `WALLET` | your `o1…` payout address (required) |
+| `WORKER` | name shown on the pool (optional; blank = the computer's name) |
+| `POOL` | `innovlab` (default), `suprnova`, `alphapool`, `rplant`, `parano1d`, `ariabrain`, or a pool address such as `stratum+tcp://noid.suprnova.cc:3345` |
+| `MODE` | optional: `balanced` (default), `performance` (highest hashrate) or `efficiency` (fewest watts per hash) |
+| `LOCK_CORE_CLOCK`, `LOCK_MEM_CLOCK`, `CORE_OFFSET`, `POWER_LIMIT` | optional OC profile, e.g. `2705`, `810`, `300` on an RTX 5070 Ti (see [Measured with efficiency settings](#measured-with-efficiency-settings)); blank leaves the card alone. Set at start, put back when the miner exits |
+
+In `start.bat` each line reads `set "FIELD=value"`, for example `set "WALLET=o1abc..."`. Start it with `sh start.sh` on Linux (with clock or power settings as root: `sudo sh start.sh`) or by double-clicking `start.bat` on Windows (with clock or power settings: right-click → Run as administrator).
+
+**Linux** — or pass the full command line:
 ```
 ./gb-parano1d-miner cuda-mine --pool innovlab --coinbase <your-o1-address> --worker rig0 --search-binary ./gb-parano1d-engine
 ```
 
-**Windows** — open `start.bat` in a text editor (right-click → Edit), put your payout address after `WALLET=`, save, and double-click `start.bat`. Or, in PowerShell:
+**Windows** — or, in PowerShell:
 ```
 ./gb-parano1d-miner.exe cuda-mine --pool innovlab --coinbase <your-o1-address> --worker rig0 --search-binary gb-parano1d-engine.exe
 ```
@@ -51,7 +63,7 @@ No CUDA Toolkit is needed to run — only an NVIDIA driver, version 580 or newer
 **HiveOS** — Flight Sheet → Custom miner:
 - Miner name: `parano1d`
 - Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v3.0.2/parano1d-3.0.2.tar.gz`
-- Wallet and worker template: `%WAL%.%WORKER_NAME%` (or your `o1...` address), pool address in the pool field; everything else is optional (see the README inside the package).
+- Wallet and worker template: `%WAL%.%WORKER_NAME%` (or your `o1...` address), pool address in the pool field; everything else is optional, for example `MODE=performance` or `LOCK_CORE_CLOCK=`, `LOCK_MEM_CLOCK=`, `CORE_OFFSET=` in the custom user config (see the README inside the package).
 
 HiveOS derives the miner name from the archive's file name, so use exactly this URL and `parano1d`. On HiveOS the rig's OC profile owns the clocks: memory-clock autotune is off there unless you add `AUTOTUNE=on`.
 
@@ -139,7 +151,7 @@ Output that is redirected — HiveOS, a log file, a pipe — stays a plain log. 
 Compared with 3.0.1:
 
 - **New native GA100 kernel for the CMP 170HX, A100 and A30.** A kernel built and tuned for this chip instead of the portable fallback. Measured on four CMP 170HX with a 200 W power limit set by the rig's host: 164.8 MH/s per card at 198 W (833 kH/W) against 64.0 MH/s with the fallback (+157 %); on an A100 SXM4 40 GB with its 400 W power limit, which it did not reach: 251.4 MH/s at 272 W with the card below 60 °C (923 kH/W) and at 292–294 W at about 73 °C. GA100 cards run this one kernel; the mining modes are for RTX 30/40/50. Runs with NVIDIA driver 580 or newer. The A30 uses the same chip but has not been tested.
-- **Less CPU load on every GPU.** The engine's active wait at the end of each batch now adapts to the card and the host: about 1–2 % of one CPU core per GPU on an otherwise idle host instead of about 5 %, measured on an RTX 3060 (Windows) and an RTX 5070 Ti (Linux) with and without a locked core clock, and on an A100. The time the GPU waits for the host between batches stayed the same within ±0.01 % (on an RTX 4060 Ti next to other work it did not increase). On a busy host the wait stays closer to the old one (an RTX 4060 Ti next to other work: 4.6 %; four CMP 170HX on a four-thread CPU: 3.2–3.9 % per GPU).
+- **Less CPU load on every GPU.** The engine's active wait at the end of each batch now adapts to the card and the host: about 1–2 % of one CPU core per GPU on an otherwise idle host instead of about 5 %, measured on an RTX 3060 (Windows) and an RTX 5070 Ti (Linux) with and without a locked core clock, and on an A100. The time the GPU waits for the host between batches stayed the same within ±0.01 % (on an RTX 4060 Ti next to other work it did not increase). On a busy host the wait stays closer to the old one (an RTX 4060 Ti next to other work: 4.6 %; four CMP 170HX on a four-thread CPU: 3.1–4.3 % per GPU).
 
 ### 3.0.1
 
