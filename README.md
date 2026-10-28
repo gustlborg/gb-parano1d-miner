@@ -109,6 +109,16 @@ Locked core clock, memory clock and core-clock offset, set from outside the mine
 | RTX 5070 Ti (Linux) | balanced | 2705 MHz / 810 MHz / +300 MHz | 116.77 | 199.5 W | 585.2 |
 | RTX 5070 Ti (Linux) | efficiency | 2705 MHz / 810 MHz / +300 MHz | 111.29 | 180.9 W | 615.1 |
 
+### GA100 and Hopper cards (rented servers)
+
+On rented servers the host sets the clocks and the power limit, so no OC profile could be applied: these cards ran at the host's settings (its power limit, default clocks), and only the hashrate is shown. They have no mining modes; each runs its one kernel. Measured live at the InnovLab pool with 3.0.5 on 28 October 2026, mean of two 2-minute runs.
+
+| GPU | Power limit | MH/s |
+|---|---|---|
+| CMP 170HX | 200 W (set by the host; the card's default is 250 W) | 280.3 |
+| A100 SXM4 40GB | 400 W (the card's default) | 388.7 |
+| H100 NVL | 400 W (set by the host; the card's default is 310 W) | 578.3 |
+
 ## Multi-GPU
 
 ```
