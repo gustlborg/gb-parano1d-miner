@@ -8,7 +8,14 @@ Works out of the box with the **InnovLab**, **Suprnova**, **AlphaPool** and **RP
 
 Built for **hashrate and efficiency**: per-architecture search kernels reach full speed while an automatic low memory-clock lock trims board power (about 13 W on an RTX 5070 Ti) at no cost to the rate, and an adjustable per-GPU power limit lets you set the watts-per-share point you want.
 
-**Current release: v3.0.2**
+**Current release: v3.0.5**
+
+- **About +50 % on GA100 and Hopper cards.** New arithmetic for the CMP 170HX, A100, A30 and H100, measured live at the InnovLab pool against 3.0.2 on rented servers at stock settings: CMP 170HX +47.5 % (190.1 → 280.3 MH/s at practically the same power, +1 %), A100 SXM4 +54.6 % (251.4 → 388.7 MH/s), H100 NVL +50.1 % (385.3 → 578.3 MH/s at its 400 W limit). In our tests on 27–28 October 2026 this was the highest hashrate on these three cards against every other NOID miner that ran on them (six on the CMP 170HX and the A100, five on the H100 NVL), at stock settings.
+- **RTX 30 and RTX 40 faster in every mode.** New kernels, measured live against 3.0.2 at the same locked clocks and core-clock offset: RTX 4060 Ti +1.55 % in `performance`, +1.67 % in `balanced` and +1.35 % in `efficiency`, with 1.8–3.5 % more hashes per watt; RTX 3060 (Windows) +3.73 %, +1.30 % and +1.33 %. On RTX 30 cards `performance` now uses more of the card: at a locked clock it draws about 8 % more power for its 3.7 % (choose `balanced` for the best hashes per watt); at the stock 170 W power limit the RTX 3060 gains 1.7 % in `performance` at the same power.
+- RTX 50 (Blackwell) runs the same kernels as in 3.0.2 (RTX 5070 Ti measured unchanged within ±0.03 %).
+- Everything from 3.0.2 stays: the native GA100 kernel, the lower CPU load of the engine, three mining modes with `balanced` as the default, and a developer fee of 2 %.
+
+**Since 3.0.2:**
 
 - **New native kernel for GA100 cards (CMP 170HX, A100, A30): about 2.5× the hashrate on the CMP 170HX and the A100.** These cards (compute capability 8.0) ran the portable JIT fallback until now. 3.0.2 brings a kernel built for them, measured live at the InnovLab pool: CMP 170HX 164.8 MH/s per card at 198 W (power limit 200 W, set by the rig's host), A100 SXM4 251.4 MH/s at about 270–295 W (power limit 400 W, not reached). In v3.0.1 these cards reached 64.0 MH/s (CMP 170HX) and about 99 MH/s (A100). Like every other supported card it now runs with NVIDIA driver 580 or newer; the fallback needed a driver with CUDA 13.3 support, so on older drivers these cards did not start at all.
 - **Less CPU load on every GPU.** At the end of each batch the engine now waits only as long as the card and the host need: on an otherwise idle host about 1–2 % of one CPU core per GPU instead of about 5 % (RTX 3060 under Windows 1.0–1.5 %, RTX 5070 Ti 1.7–2.2 %, A100 0.9 %), with the GPU kept as busy as before (the time it waits for the host between batches unchanged within ±0.01 %). On a busy host it keeps a larger margin by itself.
@@ -17,7 +24,7 @@ Built for **hashrate and efficiency**: per-architecture search kernels reach ful
 
 - **CPU load fixed.** While the GPUs work, the miner needs only about 5 % of one CPU core per GPU instead of a full core — new on Windows, on Linux and HiveOS since 2.18.5. Tested out of the box on rented rigs: three GPUs on a two-thread CPU use 8 % of it. (3.0.2 lowers it further, see above.)
 - **The fastest and most efficient NOID miner in our tests.** `performance` mode showed the highest hashrate (before developer fees) and `efficiency` mode the most hashes per watt against eight other NOID miners for Stratum pools built for RTX 30/40/50 cards, on an RTX 4060 Ti and an RTX 5070 Ti under Linux, and against the six of them that ran on an RTX 3060 under Windows. Every miner ran at the same locked core clock with offset (the clocks in the table below), the other miners with their default options and in the versions current when we tested them (24–25 October 2026).
-- **Three mining modes.** `performance` for the highest hashrate (up to +1.3 % over 2.18.5, on RTX 40); `balanced`, the new default, gives up about 1–2 % hashrate for up to about 2.5 % more hashes per watt; `efficiency` gives up about 6 % hashrate for up to about 9 % more hashes per watt (both compared with `performance` at a locked core clock with offset; see [Mining modes](#mining-modes)).
+- **Three mining modes.** `performance` for the highest hashrate (up to +1.3 % over 2.18.5, on RTX 40); `balanced`, the new default, gives up about 1–4 % hashrate for up to about 8 % more hashes per watt; `efficiency` gives up about 5.5–9 % hashrate for up to about 15 % more hashes per watt (both compared with `performance` at a locked core clock with offset; see [Mining modes](#mining-modes)).
 - **Developer fee lowered to 2 %** (was 3 %).
 
 ---
@@ -28,9 +35,9 @@ Grab the archive for your platform from [Releases](../../releases/latest), unpac
 
 | Platform | Archive |
 |---|---|
-| Linux | `parano1d-miner-3.0.2-linux.tar.gz` |
-| Windows | `parano1d-miner-3.0.2-windows.zip` |
-| HiveOS | `parano1d-3.0.2.tar.gz` (custom-miner package) |
+| Linux | `parano1d-miner-3.0.5-linux.tar.gz` |
+| Windows | `parano1d-miner-3.0.5-windows.zip` |
+| HiveOS | `parano1d-3.0.5.tar.gz` (custom-miner package) |
 
 The Linux and Windows archives carry a `SHA256SUMS` with the SHA-256 of each file inside them, and the `SHA256SUMS` on the release lists all three archives.
 
@@ -62,7 +69,7 @@ In `start.bat` each line reads `set "FIELD=value"`, for example `set "WALLET=o1a
 
 **HiveOS** — Flight Sheet → Custom miner:
 - Miner name: `parano1d`
-- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v3.0.2/parano1d-3.0.2.tar.gz`
+- Installation URL: `https://github.com/gustlborg/gb-parano1d-miner/releases/download/v3.0.5/parano1d-3.0.5.tar.gz`
 - Wallet and worker template: `%WAL%.%WORKER_NAME%` (or your `o1...` address), pool address in the pool field; everything else is optional, for example `MODE=performance` or `LOCK_CORE_CLOCK=`, `LOCK_MEM_CLOCK=`, `CORE_OFFSET=` in the custom user config (see the README inside the package).
 
 HiveOS derives the miner name from the archive's file name, so use exactly this URL and `parano1d`. On HiveOS the rig's OC profile owns the clocks: memory-clock autotune is off there unless you add `AUTOTUNE=on`.
@@ -88,19 +95,19 @@ RTX 30/40/50-series, Hopper (H100 — validated on H100 NVL; the H200 uses the s
 
 ## Measured with efficiency settings
 
-Locked core clock, memory clock and core-clock offset, set from outside the miner through the NVIDIA driver; the miner's own options (`LOCK_CORE_CLOCK`, `LOCK_MEM_CLOCK`, `CORE_OFFSET` in `start.sh` / `start.bat`, the same keys on HiveOS) do the same, the power can then differ by several percent. Measured live at the InnovLab pool with 3.0.2 on 26 October 2026, two 1-minute runs per mode (mean shown). Displayed hashrate, board power from nvidia-smi; kH/W is kilohashes per second per watt. Every card tolerates a different offset; see "Same hashrate, less power" in the package README.
+Locked core clock, memory clock and core-clock offset, set from outside the miner through the NVIDIA driver; the miner's own options (`LOCK_CORE_CLOCK`, `LOCK_MEM_CLOCK`, `CORE_OFFSET` in `start.sh` / `start.bat`, the same keys on HiveOS) do the same, the power can then differ by several percent. Measured live at the InnovLab pool with 3.0.5 on 28 October 2026, two 1-minute runs per mode (mean shown). Displayed hashrate, board power from nvidia-smi; kH/W is kilohashes per second per watt. Every card tolerates a different offset; see "Same hashrate, less power" in the package README.
 
 | GPU | Mode | Core clock / memory clock / offset | MH/s | Power | kH/W |
 |---|---|---|---|---|---|
-| RTX 3060 (Windows) | performance | 1750 MHz / 810 MHz / +200 MHz | 29.72 | 93.8 W | 316.8 |
-| RTX 3060 (Windows) | balanced | 1750 MHz / 810 MHz / +200 MHz | 29.18 | 89.8 W | 324.9 |
-| RTX 3060 (Windows) | efficiency | 1750 MHz / 810 MHz / +200 MHz | 27.79 | 81.2 W | 342.2 |
-| RTX 4060 Ti (Linux) | performance | 2450 MHz / 810 MHz / +250 MHz | 52.30 | 105.0 W | 498.1 |
-| RTX 4060 Ti (Linux) | balanced | 2450 MHz / 810 MHz / +250 MHz | 51.81 | 102.2 W | 506.9 |
-| RTX 4060 Ti (Linux) | efficiency | 2450 MHz / 810 MHz / +250 MHz | 49.12 | 90.2 W | 544.6 |
-| RTX 5070 Ti (Linux) | performance | 2705 MHz / 810 MHz / +300 MHz | 117.76 | 198.3 W | 593.8 |
-| RTX 5070 Ti (Linux) | balanced | 2705 MHz / 810 MHz / +300 MHz | 116.83 | 192.2 W | 607.9 |
-| RTX 5070 Ti (Linux) | efficiency | 2705 MHz / 810 MHz / +300 MHz | 111.30 | 173.9 W | 640.0 |
+| RTX 3060 (Windows) | performance | 1750 MHz / 810 MHz / +200 MHz | 30.83 | 102.1 W | 302.0 |
+| RTX 3060 (Windows) | balanced | 1750 MHz / 810 MHz / +200 MHz | 29.55 | 90.7 W | 325.8 |
+| RTX 3060 (Windows) | efficiency | 1750 MHz / 810 MHz / +200 MHz | 28.16 | 81.2 W | 346.8 |
+| RTX 4060 Ti (Linux) | performance | 2450 MHz / 810 MHz / +250 MHz | 53.10 | 106.4 W | 499.1 |
+| RTX 4060 Ti (Linux) | balanced | 2450 MHz / 810 MHz / +250 MHz | 52.66 | 103.3 W | 509.8 |
+| RTX 4060 Ti (Linux) | efficiency | 2450 MHz / 810 MHz / +250 MHz | 49.76 | 89.5 W | 555.7 |
+| RTX 5070 Ti (Linux) | performance | 2705 MHz / 810 MHz / +300 MHz | 117.72 | 206.3 W | 570.7 |
+| RTX 5070 Ti (Linux) | balanced | 2705 MHz / 810 MHz / +300 MHz | 116.77 | 199.5 W | 585.2 |
+| RTX 5070 Ti (Linux) | efficiency | 2705 MHz / 810 MHz / +300 MHz | 111.29 | 180.9 W | 615.1 |
 
 ## Multi-GPU
 
@@ -132,7 +139,7 @@ The miner reads each card's allowed range first and refuses to start with a valu
 - **balanced** (default) — a little less hashrate for fewer watts per hash.
 - **efficiency** — the fewest watts per hash, at a lower hashrate.
 
-Balanced and efficiency save power whenever the card is not held back by its power limit: with a locked core clock (`--lock-core-clock` or an OC profile), with or without a core-clock offset, or when it already reaches its top clock below the limit, like an RTX 5070 Ti at stock settings. At a locked core clock, balanced gives up about 1–2 % hashrate for 2–6 % less power (about 3–4 % with an offset), and efficiency 5.5–6.5 % hashrate for 14–16 % less power (12–14 % with an offset), measured on an RTX 3060, RTX 4060 Ti and RTX 5070 Ti. A card that runs into its power limit, like an RTX 3060 or RTX 4060 Ti at stock settings, turns the saved power into clock instead: there balanced saves no power and is 0.2–0.9 % slower than performance (`--mode performance` gives that back), and efficiency gives up 3–4 %. At a lowered power limit all three modes draw the same power; balanced is as fast as performance (RTX 4060 Ti +0.4 %, RTX 5070 Ti +0.5 %, RTX 3060 −0.1 %) and efficiency only costs hashrate (−1 to −2.5 %), so it is not the mode for a card held at its power limit. A locked core clock plus a core-clock offset (see "Same hashrate, less power" in the package README) gives the biggest saving, in any mode. The README inside each package lists the numbers measured per card.
+Balanced and efficiency save power whenever the card is not held back by its power limit: with a locked core clock (`--lock-core-clock` or an OC profile), with or without a core-clock offset, or when it already reaches its top clock below the limit, like an RTX 5070 Ti at stock settings. At a locked core clock, balanced gives up about 1–2 % hashrate for 2–6 % less power (about 3–11 % with an offset), and efficiency 5.5–9 % hashrate for 14–16 % less power (12–20 % with an offset), measured on an RTX 3060, RTX 4060 Ti and RTX 5070 Ti. A card that runs into its power limit, like an RTX 3060 or RTX 4060 Ti at stock settings, turns the saved power into clock instead: there balanced saves no power and is 0.2–0.9 % slower than performance (`--mode performance` gives that back), and efficiency gives up 3–4 %. At a lowered power limit all three modes draw the same power; balanced is as fast as performance (RTX 4060 Ti +0.4 %, RTX 5070 Ti +0.5 %, RTX 3060 −0.1 %) and efficiency only costs hashrate (−1 to −2.5 %), so it is not the mode for a card held at its power limit. A locked core clock plus a core-clock offset (see "Same hashrate, less power" in the package README) gives the biggest saving, in any mode. The README inside each package lists the numbers measured per card.
 
 Modes exist for RTX 30, RTX 40 and RTX 50 cards. Other GPUs (H100, the GA100 cards A100, A30 and CMP 170HX, and cards on the JIT fallback) run their one kernel, and the card's line in the log says so.
 
@@ -146,7 +153,37 @@ In a terminal window the miner shows a live dashboard: pool, wallet, worker, dri
 
 Output that is redirected — HiveOS, a log file, a pipe — stays a plain log. The dashboard copies out of a terminal as merged lines; set `PARANO1D_PLAIN_OUTPUT=1` for a plain, append-only log that pastes cleanly into a bug report.
 
-## What's new in 3.0.2
+## What's new in 3.0.5
+
+Compared with 3.0.2:
+
+- **New arithmetic for GA100 (CMP 170HX, A100, A30) and Hopper (H100) cards.** Measured live at the InnovLab pool on 28 October 2026 on rented servers, stock settings (the host's power limit, default clocks), 3.0.2 and 3.0.5 taking turns, two-minute runs, the mean of two runs for 3.0.5:
+
+| GPU | 3.0.2 | 3.0.5 | Hashrate | Power | kH/W |
+|---|---|---|---|---|---|
+| CMP 170HX | 190.1 MH/s at 197 W | 280.3 MH/s at 199 W | +47.49 % | +1.07 % | +45.93 % |
+| A100 SXM4 40GB | 251.4 MH/s at 274 W | 388.7 MH/s at 338 W | +54.61 % | +23.31 % | +25.39 % |
+| H100 NVL | 385.3 MH/s at 375 W | 578.3 MH/s at 398 W | +50.10 % | +6.23 % | +41.30 % |
+
+The A30 uses the same chip as the A100 but has not been tested. On power-limited cards (the CMP 170HX at its 200 W host limit, the H100 NVL at 400 W) the extra rate comes at the same power; the A100, below its limit, draws more power for it and still gains 25 % hashes per watt.
+
+- **New kernels for RTX 30 and RTX 40 cards, in all three modes.** Measured live at the InnovLab pool on 28 October 2026 with the release packages of 3.0.2 and 3.0.5 taking turns, two 1-minute runs per mode and version, the same OC profile for both (see [Measured with efficiency settings](#measured-with-efficiency-settings)), no invalid shares:
+
+| GPU | Mode | 3.0.2 | 3.0.5 | Hashrate | Power | kH/W |
+|---|---|---|---|---|---|---|
+| RTX 4060 Ti (Linux) | performance | 52.29 MH/s | 53.10 MH/s | +1.55 % | −0.34 % | +1.89 % |
+| RTX 4060 Ti (Linux) | balanced | 51.80 MH/s | 52.66 MH/s | +1.67 % | −0.12 % | +1.79 % |
+| RTX 4060 Ti (Linux) | efficiency | 49.10 MH/s | 49.76 MH/s | +1.35 % | −2.10 % | +3.53 % |
+| RTX 3060 (Windows) | performance | 29.72 MH/s | 30.83 MH/s | +3.73 % | +7.84 % | −3.80 % |
+| RTX 3060 (Windows) | balanced | 29.18 MH/s | 29.55 MH/s | +1.30 % | +0.41 % | +0.89 % |
+| RTX 3060 (Windows) | efficiency | 27.79 MH/s | 28.16 MH/s | +1.33 % | −1.56 % | +2.93 % |
+| RTX 5070 Ti (Linux) | performance | 117.71 MH/s | 117.72 MH/s | +0.01 % | −0.16 % | +0.17 % |
+| RTX 5070 Ti (Linux) | balanced | 116.74 MH/s | 116.77 MH/s | +0.03 % | +0.02 % | ±0.00 % |
+| RTX 5070 Ti (Linux) | efficiency | 111.29 MH/s | 111.29 MH/s | ±0.00 % | +0.09 % | −0.09 % |
+
+The RTX 5070 Ti runs the same kernel in both versions; its rows show the spread of such a measurement. Workstation and data-center cards with RTX 30 or RTX 40 chips get the same new kernels; their speed is not measured.
+
+### 3.0.2
 
 Compared with 3.0.1:
 
@@ -157,7 +194,7 @@ Compared with 3.0.1:
 
 Compared with 2.18.5:
 
-- **New mining modes, and a new default.** `--mode performance|balanced|efficiency` (`MODE=` in `start.sh`, `start.bat` and the HiveOS custom user config), see [Mining modes](#mining-modes). Without an option the miner now runs **balanced**; 2.18.5 ran what is now called `performance`. At a locked core clock (with or without a core-clock offset), balanced gives up about 1–2 % hashrate for 2–6 % less power (about 3–4 % with an offset; table above), and at the stock power limit of an RTX 3060 or RTX 4060 Ti the card turns the saved watts into clock, so balanced saves no power there and is 0.2–0.9 % slower. `--mode performance` (`MODE=performance`) gives the 2.18.5 behaviour back. The 2.18.5 option `--efficiency mode1|mode2` still works, and so does `EFFICIENCY=` on HiveOS.
+- **New mining modes, and a new default.** `--mode performance|balanced|efficiency` (`MODE=` in `start.sh`, `start.bat` and the HiveOS custom user config), see [Mining modes](#mining-modes). Without an option the miner now runs **balanced**; 2.18.5 ran what is now called `performance`. At a locked core clock (with or without a core-clock offset), balanced gives up about 1–2 % hashrate for 2–6 % less power (about 3–4 % with an offset), and at the stock power limit of an RTX 3060 or RTX 4060 Ti the card turns the saved watts into clock, so balanced saves no power there and is 0.2–0.9 % slower. `--mode performance` (`MODE=performance`) gives the 2.18.5 behaviour back. The 2.18.5 option `--efficiency mode1|mode2` still works, and so does `EFFICIENCY=` on HiveOS.
 - **Developer fee lowered to 2 %** (was 3 %).
 - **Faster on RTX 40 in performance mode.** A retuned kernel for RTX 40-series cards: +1.3 % hashrate on an RTX 4060 Ti at a locked core clock, for about 2 % more power, and +0.4 % at stock clocks, where the card sits at its power limit (both against 2.18.5). Also in performance mode, the RTX 30 kernel is on par (+0.1 % hashrate at 0.8 % less power on an RTX 3060, same session) and the RTX 50 kernel is unchanged.
 - **Balanced and efficiency retuned on all three generations.** Compared with performance at a locked core clock, balanced gives up about 1–2 % hashrate for 2–6 % less power: RTX 4060 Ti −0.9 % hashrate and −3.0 % power, RTX 5070 Ti −0.8 % and −2.2 %, RTX 3060 −1.9 % and −6.0 %. Efficiency saves the most: −6 to −6.5 % hashrate for −15 to −16 % power on RTX 30 and RTX 40, −5.5 % and −14 % on RTX 50. These savings need a card that is not held at its power limit. At a lowered power limit balanced is as fast as performance (RTX 4060 Ti +0.4 %, RTX 5070 Ti +0.5 %, RTX 3060 −0.1 % at the same watts), while efficiency only costs hashrate there (−1 to −2.5 % at the same watts). The READMEs list the measured numbers per card, locked, at a lowered power limit and at stock settings.
