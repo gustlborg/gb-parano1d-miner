@@ -171,11 +171,11 @@ Compared with 3.0.2:
 
 | GPU | 3.0.2 | 3.0.5 | Hashrate | Power | kH/W |
 |---|---|---|---|---|---|
-| CMP 170HX | 190.1 MH/s at 197 W | 280.3 MH/s at 199 W | +47.49 % | +1.07 % | +45.93 % |
-| A100 SXM4 40GB | 251.4 MH/s at 274 W | 388.7 MH/s at 338 W | +54.61 % | +23.31 % | +25.39 % |
-| H100 NVL | 385.3 MH/s at 375 W | 578.3 MH/s at 398 W | +50.10 % | +6.23 % | +41.30 % |
+| CMP 170HX | 190.1 MH/s | 280.3 MH/s | +47.49 % | +1.07 % | +45.93 % |
+| A100 SXM4 40GB | 251.4 MH/s | 388.7 MH/s | +54.61 % | +23.31 % | +25.39 % |
+| H100 NVL | 385.3 MH/s | 578.3 MH/s | +50.10 % | +6.23 % | +41.30 % |
 
-The A30 uses the same chip as the A100 but has not been tested. On power-limited cards (the CMP 170HX at its 200 W host limit, the H100 NVL at 400 W) the extra rate comes at the same power; the A100, below its limit, draws more power for it and still gains 25 % hashes per watt.
+The A30 uses the same chip as the A100 but has not been tested. On power-limited cards (the CMP 170HX at its 200 W host limit, the H100 NVL at 400 W) the extra rate costs little extra power (+1 % and +6 %, the H100 NVL now running at its limit); the A100, below its limit, draws more power for it and still gains 25 % hashes per watt.
 
 - **New kernels for RTX 30 and RTX 40 cards, in all three modes.** Measured live at the InnovLab pool on 28 October 2026 with the release packages of 3.0.2 and 3.0.5 taking turns, two 1-minute runs per mode and version, the same OC profile for both (see [Measured with efficiency settings](#measured-with-efficiency-settings)), no invalid shares:
 
